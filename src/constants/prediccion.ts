@@ -1,4 +1,4 @@
-import type { PerfilPrediccion } from "@/types/prediccion";
+import type { PerfilPredefinido, PerfilPrediccion } from "@/types/prediccion";
 
 type BaseCampo = {
   nombre: keyof PerfilPrediccion;
@@ -43,6 +43,55 @@ export const PERFIL_EJEMPLO: PerfilPrediccion = {
   unidades_curriculares_1er_sem_aprobadas: 5,
   unidades_curriculares_1er_sem_nota: 13,
 };
+
+export const PERFILES_PREDEFINIDOS: PerfilPredefinido[] = [
+  {
+    id: "rendimiento-solido",
+    nombre: "Rendimiento solido",
+    descripcion: "Becario, con pagos al dia y buen desempeno academico.",
+    perfil: {
+      ...PERFIL_EJEMPLO,
+      nota_admision: 150,
+      becario: 1,
+      edad_al_matricularse: 19,
+      unidades_curriculares_1er_sem_inscritas: 6,
+      unidades_curriculares_1er_sem_evaluaciones: 6,
+      unidades_curriculares_1er_sem_aprobadas: 6,
+      unidades_curriculares_1er_sem_nota: 16,
+    },
+  },
+  {
+    id: "seguimiento-preventivo",
+    nombre: "Seguimiento preventivo",
+    descripcion: "Condiciones estables con rendimiento academico intermedio.",
+    perfil: {
+      ...PERFIL_EJEMPLO,
+      edad_al_matricularse: 22,
+      unidades_curriculares_1er_sem_evaluaciones: 4,
+      unidades_curriculares_1er_sem_aprobadas: 3,
+      unidades_curriculares_1er_sem_nota: 11.5,
+    },
+  },
+  {
+    id: "riesgo-elevado",
+    nombre: "Riesgo elevado",
+    descripcion: "Pagos pendientes, deuda activa y bajo rendimiento en el semestre.",
+    perfil: {
+      ...PERFIL_EJEMPLO,
+      asistencia_diurna_nocturna: 0,
+      nota_admision: 110,
+      deudor: 1,
+      mensualidades_al_dia: 0,
+      edad_al_matricularse: 27,
+      unidades_curriculares_1er_sem_inscritas: 6,
+      unidades_curriculares_1er_sem_evaluaciones: 2,
+      unidades_curriculares_1er_sem_aprobadas: 0,
+      unidades_curriculares_1er_sem_nota: 5,
+    },
+  },
+];
+
+export const PERFIL_PREDETERMINADO = PERFILES_PREDEFINIDOS[1];
 
 export const PERFIL_VACIO: PerfilPrediccion = {
   ...PERFIL_EJEMPLO,

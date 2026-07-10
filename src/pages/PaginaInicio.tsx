@@ -5,9 +5,9 @@ import { PanelResultado } from "@/components/prediccion/PanelResultado";
 import { ResumenMetodologia } from "@/components/prediccion/ResumenMetodologia";
 import { Insignia } from "@/components/ui/insignia";
 import { Tarjeta, ContenidoTarjeta, DescripcionTarjeta, EncabezadoTarjeta, TituloTarjeta } from "@/components/ui/tarjeta";
-import { CAMPOS_NUMERICOS, PERFIL_EJEMPLO, PERFIL_VACIO, SECCIONES_FORMULARIO } from "@/constants/prediccion";
+import { CAMPOS_NUMERICOS, PERFIL_PREDETERMINADO, PERFILES_PREDEFINIDOS, PERFIL_VACIO, SECCIONES_FORMULARIO } from "@/constants/prediccion";
 import { predecirDesercion } from "@/services/prediccionApi";
-import type { PerfilPrediccion, ResultadoPrediccion } from "@/types/prediccion";
+import type { PerfilPredefinido, PerfilPrediccion, ResultadoPrediccion } from "@/types/prediccion";
 
 type EstadoEnvio = "idle" | "cargando" | "exito" | "error";
 type ErroresFormulario = Partial<Record<keyof PerfilPrediccion, string>>;
@@ -30,7 +30,8 @@ function validarPerfil(perfil: PerfilPrediccion): ErroresFormulario {
 }
 
 export function PaginaInicio() {
-  const [perfil, setPerfil] = useState<PerfilPrediccion>(PERFIL_EJEMPLO);
+  const [perfil, setPerfil] = useState<PerfilPrediccion>(PERFIL_PREDETERMINADO.perfil);
+  const [perfilSeleccionadoId, setPerfilSeleccionadoId] = useState<string | undefined>(PERFIL_PREDETERMINADO.id);
   const [perfilEvaluado, setPerfilEvaluado] = useState<PerfilPrediccion | null>(null);
   const [resultado, setResultado] = useState<ResultadoPrediccion | null>(null);
   const [estado, setEstado] = useState<EstadoEnvio>("idle");
@@ -49,6 +50,7 @@ export function PaginaInicio() {
 
   function actualizarCampo(nombre: keyof PerfilPrediccion, valor: number) {
     setPerfil((actual) => ({ ...actual, [nombre]: valor }));
+    setPerfilSeleccionadoId(undefined);
   }
 
   async function manejarEnvio(evento: FormEvent<HTMLFormElement>) {
@@ -75,8 +77,9 @@ export function PaginaInicio() {
     }
   }
 
-  function cargarEjemplo() {
-    setPerfil(PERFIL_EJEMPLO);
+  function seleccionarPerfil(perfilPredefinido: PerfilPredefinido) {
+    setPerfil(perfilPredefinido.perfil);
+    setPerfilSeleccionadoId(perfilPredefinido.id);
     setResultado(null);
     setPerfilEvaluado(null);
     setError("");
@@ -85,6 +88,7 @@ export function PaginaInicio() {
 
   function limpiarFormulario() {
     setPerfil(PERFIL_VACIO);
+    setPerfilSeleccionadoId(undefined);
     setResultado(null);
     setPerfilEvaluado(null);
     setError("");
@@ -118,9 +122,11 @@ export function PaginaInicio() {
                 secciones={SECCIONES_FORMULARIO}
                 errores={errores}
                 cargando={estado === "cargando"}
+                perfilesPredefinidos={PERFILES_PREDEFINIDOS}
+                perfilSeleccionadoId={perfilSeleccionadoId}
                 onChange={actualizarCampo}
                 onSubmit={manejarEnvio}
-                onCargarEjemplo={cargarEjemplo}
+                onSeleccionarPerfil={seleccionarPerfil}
                 onLimpiar={limpiarFormulario}
               />
             </ContenidoTarjeta>

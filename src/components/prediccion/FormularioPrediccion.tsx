@@ -1,19 +1,22 @@
 import { FormEvent } from "react";
-import { AlertCircle, Loader2, RotateCcw, Send, Trash2 } from "lucide-react";
+import { AlertCircle, Check, Loader2, Send, Trash2 } from "lucide-react";
 import { Boton } from "@/components/ui/boton";
 import { CampoNumerico } from "@/components/prediccion/CampoNumerico";
 import { CampoSeleccion } from "@/components/prediccion/CampoSeleccion";
 import type { SeccionFormulario } from "@/constants/prediccion";
-import type { PerfilPrediccion } from "@/types/prediccion";
+import { concatenarClases } from "@/lib/utiles";
+import type { PerfilPredefinido, PerfilPrediccion } from "@/types/prediccion";
 
 type PropiedadesFormularioPrediccion = {
   perfil: PerfilPrediccion;
   secciones: SeccionFormulario[];
   errores: Partial<Record<keyof PerfilPrediccion, string>>;
   cargando: boolean;
+  perfilesPredefinidos: PerfilPredefinido[];
+  perfilSeleccionadoId?: string;
   onChange: (nombre: keyof PerfilPrediccion, valor: number) => void;
   onSubmit: (evento: FormEvent<HTMLFormElement>) => void;
-  onCargarEjemplo: () => void;
+  onSeleccionarPerfil: (perfil: PerfilPredefinido) => void;
   onLimpiar: () => void;
 };
 
@@ -22,9 +25,11 @@ export function FormularioPrediccion({
   secciones,
   errores,
   cargando,
+  perfilesPredefinidos,
+  perfilSeleccionadoId,
   onChange,
   onSubmit,
-  onCargarEjemplo,
+  onSeleccionarPerfil,
   onLimpiar,
 }: PropiedadesFormularioPrediccion) {
   const totalErrores = Object.keys(errores).length;
@@ -32,6 +37,39 @@ export function FormularioPrediccion({
 
   return (
     <form className="space-y-6" onSubmit={onSubmit} noValidate>
+      <fieldset className="rounded-lg border border-border p-4">
+        <legend className="text-base font-semibold text-foreground">Perfiles de prueba</legend>
+        <p className="mt-1 mb-4 text-sm text-muted-foreground">
+          Carga todos los datos de un escenario y editalos si lo necesitas antes de predecir.
+        </p>
+        <div className="grid gap-3 md:grid-cols-3">
+          {perfilesPredefinidos.map((perfilPredefinido) => {
+            const seleccionado = perfilPredefinido.id === perfilSeleccionadoId;
+
+            return (
+              <button
+                key={perfilPredefinido.id}
+                type="button"
+                onClick={() => onSeleccionarPerfil(perfilPredefinido)}
+                className={concatenarClases(
+                  "relative rounded-md border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  seleccionado
+                    ? "border-primary bg-primary/10"
+                    : "border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                )}
+                aria-pressed={seleccionado}
+              >
+                <span className="flex items-center justify-between gap-2 text-sm font-semibold text-foreground">
+                  {perfilPredefinido.nombre}
+                  {seleccionado ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : null}
+                </span>
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{perfilPredefinido.descripcion}</span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
       {secciones.map((seccion) => (
         <fieldset key={seccion.titulo} className="rounded-lg border border-border p-4">
           <legend className="text-base font-semibold text-foreground">{seccion.titulo}</legend>
@@ -64,9 +102,6 @@ export function FormularioPrediccion({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Boton type="submit" icono={cargando ? Loader2 : Send} disabled={!formularioValido || cargando}>
           {cargando ? "Procesando prediccion..." : "Predecir"}
-        </Boton>
-        <Boton type="button" variante="contorno" icono={RotateCcw} onClick={onCargarEjemplo}>
-          Cargar ejemplo
         </Boton>
         <Boton type="button" variante="fantasma" icono={Trash2} onClick={onLimpiar}>
           Limpiar

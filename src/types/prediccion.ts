@@ -19,6 +19,13 @@ export type PerfilPrediccion = {
   unidades_curriculares_1er_sem_nota: number;
 };
 
+export type PerfilPredefinido = {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  perfil: PerfilPrediccion;
+};
+
 export type ResultadoPrediccion = {
   prediccion: string;
   probabilidad: number;
