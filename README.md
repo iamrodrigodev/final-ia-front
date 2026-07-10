@@ -43,7 +43,7 @@ Frontend React/Vite para consumir la API FastAPI del predictor de desercion estu
 
 ## Integrantes
 
-1. Rodrigo Emerson Infanzon Acosta
+1. Rodrigo Emerson Infanzón Acosta
 2. Carlos Daniel Aguilar Chirinos
 3. Piero Omar De La Cruz Mancilla
 4. Iben Omar Flores Polanco
